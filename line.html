@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>GUI mesh controller (Three.js)</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+
+<body>
+    <script src="https://threejs.org/build/three.js"></script>
+    <!-- <script src="js/Three.js"></script> -->
+    <script src="js/Detector.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script src="js/THREEx.FullScreen.js"></script>
+    <script src="js/THREEx.WindowResize.js"></script>
+
+    <script type='text/javascript' src='js/dat.gui.min.js'></script>
+
+
+    </div>
+
+    <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+    <script>
+        var renderer, camera, scene, material, points;
+        var x = 0, y = 0, z = 0;
+        var angle = 0;
+        var init = function () {
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 500);
+            camera.position.set(0, 0, 100);
+            camera.lookAt(0, 0, 0);
+
+            scene = new THREE.Scene();
+
+            material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+            points = [];
+        };
+
+        var render = function () {
+            var geometry = new THREE.BufferGeometry().setFromPoints(points);
+            var line = new THREE.Line(geometry, material);
+            scene.add(line);
+            renderer.render(scene, camera);
+        };
+
+
+        var addPointRandom = function () {
+            var r = 10;
+
+            //points.push(new THREE.Vector3(0, 0, 0));
+            points.push(new THREE.Vector3(x, y, z));
+            x = Math.random() * 2 * r - r;
+            var c = Math.floor(Math.random() * 2 - 1);
+            if (c === 0) c = 1;
+
+            y = Math.sqrt(r * r - x * x) * c;
+            console.log("Sign : " + c);
+            console.log("X :" + x + " Y : " + y + " Z : " + z);
+
+        };
+
+        var addPoint = function () {
+            var r = 10;
+
+            var radians = angle * Math.PI / 180;
+            x = r * Math.cos(radians);
+            y = r * Math.sin(radians);
+
+            points.push(new THREE.Vector3(x, y, z));
+            //console.log("X :" + x + " Y : " + y + " Z : " + z);
+            //console.log("Angle : " + angle);
+            angle += 1;
+        };
+
+        init();
+
+
+        var intervalRender = setInterval(() => {
+            console.log("Test purpose");
+            addPoint();
+            render();
+
+        }, 50);
+
+        document.body.onkeyup = function (e) {
+            if (e.keyCode == 32) {
+                clearInterval(intervalRender);
+            } else if (e.keyCode == 13) {
+                setInterval(intervalRender);
+            } else {
+                console.log("KeyCode" + e.keyCode);
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
